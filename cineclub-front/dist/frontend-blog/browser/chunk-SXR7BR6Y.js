@@ -1,0 +1,1 @@
+import{a as t}from"./chunk-F63DPOLD.js";import{e as o}from"./chunk-NSQ4QIVB.js";import{_ as e}from"./chunk-4XNWJBNU.js";var l=()=>{let i=e(t),n=e(o),r=i.getUserRole();return!r||r===""?n.createUrlTree(["/profile/register-profile"]):!0};export{l as a};

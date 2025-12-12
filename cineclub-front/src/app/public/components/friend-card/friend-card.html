@@ -1,0 +1,256 @@
+<!-- Desktop/LG Version -->
+<article
+  class="hidden lg:flex bg-[#F0F4F9] rounded-lg shadow-lg border-[0.5px] border-[#757575] p-3 md:p-4 flex-col gap-3 w-full overflow-hidden"
+>
+  <!-- Título -->
+  <div class="flex items-center gap-2 px-1">
+    <mat-icon class="text-[#9811fb] text-xl md:text-2xl">people</mat-icon>
+    <span class="font-semibold text-sm md:text-base lg:text-xl">Sugerencias de amistad</span>
+  </div>
+
+  <!-- Contenedor de cards -->
+  <div>
+    <div class="flex flex-col gap-3">
+      @if (loading) {
+        <div class="flex items-center justify-center h-full pt-2 pb-4">
+          <app-loader></app-loader>
+        </div>
+      } @else {
+        @for (user of users; track user.id) {
+          <!-- Card -->
+          <div
+            class="flex flex-col w-full items-center gap-3 bg-white rounded-lg shadow-lg border-[0.5px] border-[#757575] p-4 hover:shadow-xl transition-all"
+          >
+            <!-- Imagen -->
+            <img
+              [src]="user.avatarUrl || '/assets/images/defaultUser.png'"
+              (error)="onImageError($event)"
+              alt="Usuario"
+              class="w-20 h-20 md:w-24 md:h-24 rounded-full object-cover flex-shrink-0 shadow-xl border-[0.5px] border-[#757575]"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
+            />
+
+            <!-- Contenido -->
+            <div class="flex flex-col w-full gap-2 items-center">
+              <span class="font-semibold text-gray-800 text-sm md:text-base lg:text-lg text-center">
+                {{ user.fullName || 'Usuario desconocido' }}
+              </span>
+              <span> {{ '@' + (user.username || 'Usuario desconocido') }}</span>
+
+              <div class="flex flex-wrap gap-1.5 justify-center">
+                <span
+                  class="px-2 py-0.5 text-xs bg-[#9811fb] border border-gray-300 rounded-full text-white"
+                >
+                  {{ user.country }}
+                </span>
+              </div>
+
+              <div class="flex flex-col gap-2 w-full">
+                <button
+                  mat-stroked-button
+                  [routerLink]="['/profile/public-profile', user.id]"
+                  class="w-full"
+                >
+                  <span>Ver perfil</span>
+                </button>
+                @if (user.hasPendingRequest) {
+                  @if (user.isSender) {
+                    <button
+                      mat-raised-button
+                      color="warn"
+                      class="w-full !bg-red-600 !text-white"
+                      (click)="cancelFriendRequest(user.id)"
+                      [disabled]="cancelingRequest[user.id]"
+                    >
+                      @if (cancelingRequest[user.id]) {
+                        <span>Cancelando...</span>
+                      } @else {
+                        <span>Cancelar solicitud</span>
+                      }
+                    </button>
+                  } @else {
+                    <div class="flex flex-col gap-2 w-full">
+                      <button
+                        mat-raised-button
+                        class="w-full !bg-green-600 !text-white"
+                        (click)="acceptFriendRequest(user.id)"
+                        [disabled]="acceptingRequest[user.id]"
+                      >
+                        @if (acceptingRequest[user.id]) {
+                          <span>Aceptando...</span>
+                        } @else {
+                          <span>Aceptar solicitud</span>
+                        }
+                      </button>
+                      <button
+                        mat-stroked-button
+                        color="warn"
+                        class="w-full"
+                        (click)="rejectFriendRequest(user.id)"
+                        [disabled]="rejectingRequest[user.id]"
+                      >
+                        @if (rejectingRequest[user.id]) {
+                          <span>Rechazando...</span>
+                        } @else {
+                          <span>Rechazar</span>
+                        }
+                      </button>
+                    </div>
+                  }
+                } @else {
+                  <button
+                    mat-fab
+                    extended
+                    class="w-full"
+                    (click)="sendFriendRequest(user.id)"
+                    [disabled]="sendingRequest[user.id]"
+                  >
+                    @if (sendingRequest[user.id]) {
+                      <span>Enviando...</span>
+                    } @else {
+                      <span> Enviar solicitud</span>
+                    }
+                  </button>
+                }
+              </div>
+            </div>
+          </div>
+        } @empty {
+          <div class="text-center text-gray-600 py-8 w-full text-sm">
+            No hay sugerencias disponibles
+          </div>
+        }
+      }
+    </div>
+  </div>
+
+  <!-- Paginación para desktop (2xl+) -->
+  <div class="flex justify-between items-center mt-2 px-1">
+    <button
+      (click)="prevPage()"
+      [disabled]="!paginationParams.hasPreviousPage"
+      class="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+    >
+      <mat-icon class="text-base">chevron_left</mat-icon>
+    </button>
+
+    <span class="text-xs text-gray-600">
+      {{ paginationParams.page }} de {{ paginationParams.pageCount }}
+    </span>
+
+    <button
+      (click)="nextPage()"
+      [disabled]="!paginationParams.hasNextPage"
+      class="flex items-center gap-1 px-3 py-2 text-sm border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-100 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+    >
+      <mat-icon class="text-base">chevron_right</mat-icon>
+    </button>
+  </div>
+</article>
+
+<!-- Mobile/Tablet Slider Version -->
+<div class="lg:hidden w-full flex flex-col gap-3 py-2">
+  <div class="flex items-center justify-between px-1">
+    <div class="flex items-center gap-2">
+      <mat-icon class="text-[#9811fb]">people</mat-icon>
+      <span class="font-bold text-gray-800">Sugerencias de amistad</span>
+    </div>
+  </div>
+
+  <div
+    #sliderContainer
+    class="flex w-full overflow-x-auto gap-4 pb-0 px-1 scrollbar-hide snap-x snap-mandatory scroll-smooth"
+  >
+    @if (loading) {
+      <div class="flex w-full justify-center items-center pb-8">
+        <app-loader></app-loader>
+      </div>
+    } @else {
+      @for (user of users; track user.id; let i = $index) {
+        <div
+          class="snap-start w-full flex flex-col bg-white rounded-lg border-[0.5px] border-[#757575] overflow-hidden relative"
+        >
+          <!-- Image -->
+          <div class="w-full h-full relative">
+            <img
+              [src]="user.avatarUrl || '/assets/images/defaultUser.png'"
+              (error)="onImageError($event)"
+              alt="{{ user.fullName }}"
+              class="w-full h-full object-cover"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
+            />
+          </div>
+
+          <!-- Content -->
+          <div class="flex flex-col p-3 gap-3">
+            <div class="flex flex-col gap-0.5">
+              <span class="font-bold text-gray-900 text-sm truncate leading-tight">
+                {{ user.fullName || 'Usuario' }}
+              </span>
+              <span class="text-xs text-gray-500 truncate">
+                {{ '@' + (user.username || 'Usuario') }}
+              </span>
+            </div>
+
+            <div class="flex flex-col gap-2 w-full">
+              <button
+                mat-stroked-button
+                class="w-full"
+                [routerLink]="['/profile/public-profile', user.id]"
+              >
+                Ver perfil
+              </button>
+              @if (user.hasPendingRequest) {
+                @if (user.isSender) {
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    class="w-full !bg-red-600 !text-white"
+                    (click)="cancelFriendRequest(user.id)"
+                    [disabled]="cancelingRequest[user.id]"
+                  >
+                    Cancelar solicitud
+                  </button>
+                } @else {
+                  <button
+                    mat-raised-button
+                    class="w-full !bg-green-600 !text-white"
+                    (click)="acceptFriendRequest(user.id)"
+                    [disabled]="acceptingRequest[user.id]"
+                  >
+                    Aceptar
+                  </button>
+                  <button
+                    mat-stroked-button
+                    color="warn"
+                    class="w-full"
+                    (click)="rejectFriendRequest(user.id)"
+                    [disabled]="rejectingRequest[user.id]"
+                  >
+                    Rechazar
+                  </button>
+                }
+              } @else {
+                <button
+                  mat-fab
+                  extended
+                  class="w-full"
+                  (click)="sendFriendRequest(user.id, i)"
+                  [disabled]="sendingRequest[user.id]"
+                >
+                  Enviar solicitud
+                </button>
+              }
+            </div>
+          </div>
+        </div>
+      } @empty {
+        <div class="flex w-full justify-center items-center pt-4 text-gray-500">
+          <span>No hay sugerencias de amistad</span>
+        </div>
+      }
+    }
+  </div>
+</div>

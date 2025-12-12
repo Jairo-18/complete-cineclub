@@ -1,0 +1,43 @@
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+::ng-deep {
+  .mat-mdc-chip {
+    --mdc-chip-label-text-size: 0.75rem;
+    height: auto !important;
+    min-height: 0 !important;
+  }
+
+  .mat-mdc-chip.mat-mdc-standard-chip {
+    --mdc-chip-container-height: 24px;
+  }
+}
+
+.movie-card {
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+  }
+}
+
+::ng-deep .genre-grid-menu {
+  .mat-mdc-menu-content {
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+  }
+
+  .mat-mdc-menu-panel {
+    max-width: none !important;
+    max-height: none !important;
+    min-width: 1000px !important;
+  }
+}

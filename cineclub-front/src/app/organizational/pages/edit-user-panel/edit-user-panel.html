@@ -1,0 +1,163 @@
+<div class="brand-content-center py-10 md:py-10">
+  <section
+    class="border-[0.5px] border-[#757575] p-5 md:p-5 lg:p-10 rounded-lg bg-[#F0F4F9] text-black w-[90%] md:w-[90%] lg:w-[90%] 2xl:w-[90%] 3xl:w-[80%]"
+  >
+    <!-- Header -->
+    <div class="mb-6">
+      <div class="flex items-center gap-2 mb-0 md:mb-2">
+        <button mat-icon-button routerLink="/organizational/see-users" class="!text-gray-700">
+          <mat-icon>arrow_back</mat-icon>
+        </button>
+        <span class="text-lg md:text-2xl font-bold text-gray-800">
+          {{ isEditMode ? 'Editar Usuario' : 'Crear Usuario' }}
+        </span>
+      </div>
+      <p class="text-xs md:text-base text-gray-600 ml-12">
+        {{
+          isEditMode
+            ? 'Modifica los datos del usuario'
+            : 'Completa los datos para crear un nuevo usuario'
+        }}
+      </p>
+    </div>
+
+    @if (loading) {
+    <div class="flex justify-center items-center pb-20 md:pb-10">
+      <app-loader></app-loader>
+    </div>
+    } @else {
+    <!-- Form -->
+    <form [formGroup]="userForm" class="space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <!-- Nombre Completo -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nombre Completo</mat-label>
+          <input matInput formControlName="fullName" placeholder="Ej: Juan Pérez" />
+          <mat-icon matPrefix>person</mat-icon>
+          @if (userForm.get('fullName')?.hasError('required')) {
+          <mat-error>El nombre completo es requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Nombre de Usuario -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Nombre de Usuario</mat-label>
+          <input matInput formControlName="username" placeholder="Ej: juanperez" />
+          <mat-icon matPrefix>account_circle</mat-icon>
+        </mat-form-field>
+
+        <!-- Email -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Correo Electrónico</mat-label>
+          <input matInput formControlName="email" type="email" placeholder="Ej: juan@ejemplo.com" />
+          <mat-icon matPrefix>email</mat-icon>
+          @if (userForm.get('email')?.hasError('required')) {
+          <mat-error>El correo es requerido</mat-error>
+          } @if (userForm.get('email')?.hasError('email')) {
+          <mat-error>Ingresa un correo válido</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Teléfono -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Teléfono</mat-label>
+          <input matInput formControlName="phone" placeholder="Ej: +57 300 123 4567" />
+          <mat-icon matPrefix>phone</mat-icon>
+          @if (userForm.get('phone')?.hasError('required')) {
+          <mat-error>El teléfono es requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- País -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>País</mat-label>
+          <input
+            matInput
+            formControlName="country"
+            [matAutocomplete]="autoCountry"
+            placeholder="Buscar país..."
+          />
+          <mat-icon matPrefix>public</mat-icon>
+          <mat-autocomplete #autoCountry="matAutocomplete">
+            @for (country of filteredCountries | async; track country) {
+            <mat-option [value]="country">
+              {{ country }}
+            </mat-option>
+            }
+          </mat-autocomplete>
+          @if (userForm.get('country')?.hasError('required')) {
+          <mat-error>El país es requerido</mat-error>
+          }
+        </mat-form-field>
+
+        <!-- Rol -->
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Rol</mat-label>
+          <mat-select formControlName="roleTypeId">
+            @for (role of roles; track role.id) {
+            <mat-option [value]="role.id">
+              {{ role.name }}
+            </mat-option>
+            }
+          </mat-select>
+          <mat-icon matPrefix>badge</mat-icon>
+          @if (userForm.get('roleTypeId')?.hasError('required')) {
+          <mat-error>El rol es requerido</mat-error>
+          }
+        </mat-form-field>
+      </div>
+
+      <!-- Bibliografía (solo en modo edición) -->
+      @if (isEditMode) {
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Bibliografía</mat-label>
+        <textarea
+          matInput
+          formControlName="bibliography"
+          rows="4"
+          placeholder="Información adicional sobre el usuario..."
+        ></textarea>
+        <mat-icon matPrefix>description</mat-icon>
+      </mat-form-field>
+
+      } @if (!isEditMode) {
+      <div class="bg-blue-50 border border-violet-200 rounded-lg p-4">
+        <div class="flex-col md:flex-row items-start gap-3">
+          <mat-icon class="text-violet-600 mt-0.5">info</mat-icon>
+          <div>
+            <p class="font-semibold text-violet-800">Contraseña automática</p>
+            <p class="text-sm text-violet-700">
+              Se generará una contraseña segura automáticamente. Te la mostraremos después de crear
+              el usuario.
+            </p>
+          </div>
+        </div>
+      </div>
+      }
+
+      <div class="flex gap-4 justify-end pt-0 md:pt-4">
+        <button
+          type="button"
+          mat-stroked-button
+          (click)="cancel()"
+          [disabled]="loading"
+          class="!border-gray-400 !text-gray-700 hover:!bg-gray-50"
+        >
+          Cancelar
+        </button>
+
+        <button
+          mat-raised-button
+          color="primary"
+          (click)="saveUser()"
+          [disabled]="loading || userForm.invalid"
+          class=" "
+        >
+          <mat-icon class="mr-1">{{ isEditMode ? 'save' : 'person_add' }}</mat-icon>
+          {{ isEditMode ? 'Guardar Cambios' : 'Crear Usuario' }}
+        </button>
+      </div>
+    </form>
+    }
+  </section>
+</div>

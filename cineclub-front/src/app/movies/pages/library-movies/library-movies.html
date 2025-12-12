@@ -1,0 +1,199 @@
+<article
+  class="w-full text-black flex flex-col items-center justify-center p-3 md:px-6 py-6 md:py-12"
+>
+  <app-page-header
+    title="Películas disponibles"
+    subtitle="Explora y guarda las películas que más te gusten en tu biblioteca personal"
+  ></app-page-header>
+
+  <div
+    class="w-full flex flex-col sm:flex-col gap-2 items-start md:items-start justify-start md:justify-start mb-8"
+  >
+    <mat-form-field class="w-full" appearance="outline">
+      <mat-label>Buscar por título</mat-label>
+      <input
+        matInput
+        type="text"
+        [(ngModel)]="searchTerm"
+        (ngModelChange)="onSearchChange()"
+        placeholder="Ej: Inception, Heat..."
+      />
+      <mat-icon matPrefix>search</mat-icon>
+      @if (searchTerm) {
+        <button matSuffix mat-icon-button (click)="clearSearch()">
+          <mat-icon>close</mat-icon>
+        </button>
+      }
+    </mat-form-field>
+    <div class="flex w-full h-full gap-2">
+      <button
+        mat-stroked-button
+        [matMenuTriggerFor]="genreMenu"
+        class="w-full !border-[#9811fb]"
+        [class.!bg-[#9811fb]]="selectedGenre"
+        [class.!text-white]="selectedGenre"
+      >
+        {{ selectedGenre || 'Género' }}
+        <mat-icon class="mr-1">movie_filter</mat-icon>
+        <mat-icon>arrow_drop_down</mat-icon>
+      </button>
+
+      @if (selectedGenre) {
+        <button
+          mat-icon-button
+          (click)="clearGenreFilter()"
+          matTooltip="Limpiar filtro de género"
+          class="text-[#9811fb]"
+        >
+          <mat-icon>filter_alt_off</mat-icon>
+        </button>
+      }
+    </div>
+
+    <mat-menu #genreMenu="matMenu" class="genre-grid-menu" xPosition="after">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-1 p-2">
+        <button
+          mat-menu-item
+          (click)="selectGenre(null)"
+          class="col-span-1 md:col-span-3 !justify-center"
+          [class.!bg-purple-100]="!selectedGenre"
+        >
+          <span class="text-center w-full">Todos los géneros</span>
+        </button>
+        @for (genre of genres; track genre) {
+          <button
+            mat-menu-item
+            (click)="selectGenre(genre)"
+            [class.!bg-purple-100]="selectedGenre === genre"
+            [class.!text-purple-700]="selectedGenre === genre"
+            [class.!font-semibold]="selectedGenre === genre"
+          >
+            {{ genre }}
+          </button>
+        }
+      </div>
+    </mat-menu>
+  </div>
+
+  @if (loading) {
+    <div class="flex flex-col items-center justify-center gap-2 text-gray-600">
+      <div class="flex justify-center items-center"><app-loader></app-loader></div>
+    </div>
+  }
+
+  @if (!loading && movies.length > 0) {
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      @for (movie of movies; track movie.id) {
+        <div
+          class="flex flex-col bg-[#F0F4F9] rounded-lg p-4 shadow-lg border-[0.5px] border-[#757575] relative"
+        >
+          <div class="flex flex-col w-full justify-end items-end mb-2">
+            <div class="flex gap-1">
+              <button
+                mat-icon-button
+                class="transition-colors"
+                [style.color]="movie.userVote === 'UP' ? '#16a34a' : '#6b7280'"
+                (click)="vote(movie, 'UP')"
+                matTooltip="Me gusta"
+              >
+                <mat-icon>thumb_up</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                class="transition-colors"
+                [style.color]="movie.userVote === 'DOWN' ? '#dc2626' : '#6b7280'"
+                (click)="vote(movie, 'DOWN')"
+                matTooltip="No me gusta"
+              >
+                <mat-icon>thumb_down</mat-icon>
+              </button>
+              <button
+                mat-icon-button
+                [matMenuTriggerFor]="menu"
+                class="text-gray-500 hover:text-gray-800 transition-colors"
+              >
+                <mat-icon>more_vert</mat-icon>
+              </button>
+            </div>
+            <mat-menu #menu="matMenu" xPosition="before">
+              <button mat-menu-item (click)="guardarPelicula(movie)">
+                <mat-icon>bookmark_add</mat-icon>
+                <span>Guardar película</span>
+              </button>
+            </mat-menu>
+          </div>
+
+          <div class="relative w-full aspect-[2/3] mb-4">
+            <img
+              [src]="getMoviePoster(movie.posterPath)"
+              [alt]="movie.title"
+              (error)="onImageError($event)"
+              class="w-full h-full object-cover rounded-lg shadow-xl border-[0.5px] border-[#757575]"
+            />
+          </div>
+
+          <div class="flex flex-col flex-1 text-left">
+            <h3 class="text-lg font-bold text-gray-900 mb-2 line-clamp-2">{{ movie.title }}</h3>
+
+            <p class="text-gray-600 text-sm mb-2">
+              <span class="font-semibold">Director:</span> {{ movie.director }}
+            </p>
+
+            @if (movie.genres) {
+              <div class="flex flex-wrap gap-1.5 mb-3">
+                @for (genre of parseGenres(movie.genres); track genre) {
+                  <span
+                    class="px-2 py-0.5 text-xs bg-[#9811fb] border border-gray-300 rounded-full text-white"
+                  >
+                    {{ genre }}
+                  </span>
+                }
+              </div>
+            }
+
+            <p class="text-gray-700 text-sm leading-relaxed mb-3 line-clamp-none flex-1">
+              {{ getDisplayedOverview(movie) || 'Sin descripción disponible.' }}
+              @if ((movie.overview?.length || 0) > 150) {
+                <button
+                  class="text-[#9811fb] text-xs font-semibold hover:underline ml-1"
+                  (click)="toggleOverview(movie.id)"
+                >
+                  {{ isOverviewExpanded(movie.id) ? 'Ver menos' : 'Ver más' }}
+                </button>
+              }
+            </p>
+
+            <div class="flex flex-col gap-1 text-gray-600 text-xs mt-auto">
+              @if (movie.releaseDate) {
+                <p class="text-gray-600 text-sm">
+                  <span class="font-semibold">Estreno:</span>
+                  {{ movie.releaseDate | date: 'dd/MM/yyyy' }}
+                </p>
+              }
+              @if (movie.runtime) {
+                <p class="text-gray-600 text-sm">
+                  <span class="font-semibold">Duración:</span>
+                  {{ formatRuntime(movie.runtime) }}
+                </p>
+              }
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    @if (isLoadingMore) {
+      <div class="flex justify-center items-center py-6">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+  } @else if (!loading) {
+    <p class="text-gray-600 mt-8 text-lg text-center">
+      @if (searchTerm) {
+        No se encontraron películas con "{{ searchTerm }}"
+      } @else {
+        No hay películas disponibles por el momento.
+      }
+    </p>
+  }
+</article>

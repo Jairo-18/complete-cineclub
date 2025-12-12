@@ -1,0 +1,2 @@
+import './polyfills.server.mjs';
+import{a,b as s}from"./chunk-IZYF7JLB.mjs";import{Xa as o,ub as t,vb as p,wb as r}from"./chunk-I37AKPGM.mjs";var i=class n{static \u0275fac=function(e){return new(e||n)};static \u0275cmp=o({type:n,selectors:[["app-loader"]],decls:2,vars:0,consts:[[1,"w-[30px]","h-[30px]","md:w-[40px]","md:h-[40px]","lg:w-[50px]","lg:h-[50px]","!flex"]],template:function(e,d){e&1&&(t(0,"div",0),r(1,"mat-spinner"),p())},dependencies:[s,a],encapsulation:2})};export{i as a};

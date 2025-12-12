@@ -1,0 +1,2 @@
+import './polyfills.server.mjs';
+import{a as s}from"./chunk-HOIKXKDC.mjs";import{V as o,_ as r,nd as n,ud as a}from"./chunk-I37AKPGM.mjs";var p=class e{_httpClient=r(n);_httpUtilities=r(s);getMoviesWithPagination(t){let i=this._httpUtilities.httpParamsFromObject(t);return this._httpClient.get(`${a.backendUrl}movies`,{params:i})}getTopMovies(t=10){return this._httpClient.get(`${a.backendUrl}movies/top`,{params:{limit:t.toString()}})}static \u0275fac=function(i){return new(i||e)};static \u0275prov=o({token:e,factory:e.\u0275fac,providedIn:"root"})};export{p as a};

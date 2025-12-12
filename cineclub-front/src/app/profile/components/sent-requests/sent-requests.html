@@ -1,0 +1,87 @@
+<section class="w-full">
+  @if (loading) {
+    <div class="flex justify-center items-center text-black p-4">Cargando...</div>
+  } @else if (requests.length === 0) {
+    <div class="flex justify-center items-center text-black p-4">
+      No has enviado solicitudes todavía.
+    </div>
+  } @else {
+    <div class="flex flex-col gap-2 overflow-y-auto pr-2">
+      @for (req of requests; track req.id) {
+        <!-- Mobile View -->
+        <div
+          class="flex flex-col w-full md:hidden justify-between items-center bg-white rounded-lg border-[0.5px] border-[#757575] p-3 gap-2"
+        >
+          <div class="flex flex-row w-full items-center gap-3">
+            <img
+              [src]="req.user?.avatarUrl || 'assets/images/defaultUser.png'"
+              alt="Avatar"
+              class="w-12 h-12 rounded-full object-cover shadow-sm border-[0.5px] border-[#757575]"
+              (error)="onImageError($event)"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
+            />
+            <div>
+              <a
+                [routerLink]="['/profile/public-profile', req.receiverId]"
+                class="text-[10px] text-gray-800 font-medium hover:text-[#9811fb] hover:underline cursor-pointer"
+              >
+                {{ req.user?.fullName || 'Usuario desconocido' }}
+              </a>
+              <p class="text-[10px] text-gray-500">Estado: {{ req.status | friendStatus }}</p>
+            </div>
+          </div>
+          <div class="flex w-full">
+            <button
+              mat-raised-button
+              color="warn"
+              class="w-full !bg-red-600 !text-white"
+              (click)="onCancel(req.receiverId)"
+            >
+              Cancelar solicitud
+            </button>
+          </div>
+        </div>
+        <!-- Desktop View -->
+        <div
+          class="hidden md:flex justify-between items-center bg-white rounded-lg border-[0.5px] border-[#757575] p-3"
+        >
+          <div class="flex md:w-[50%] lg:w-[50%] 2xl:w-[50%] 3xl:w-[50%] items-center gap-3">
+            <img
+              [src]="req.user?.avatarUrl || 'assets/images/defaultUser.png'"
+              alt="Avatar"
+              class="w-10 h-10 rounded-full object-cover shadow-sm border-[0.5px] border-[#757575]"
+              (error)="onImageError($event)"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
+            />
+            <div>
+              <p class="text-sm text-gray-800 font-medium">
+                {{ req.user?.fullName || 'Usuario desconocido' }}
+              </p>
+              <p class="text-xs text-gray-500">Estado: {{ req.status | friendStatus }}</p>
+            </div>
+          </div>
+          <div class="w-[50%] md:w-[50%] lg:w-[50%] 2xl:w-[30%] 3xl:w-[30%] flex gap-2">
+            <button
+              mat-stroked-button
+              [routerLink]="['/profile/public-profile', req.receiverId]"
+              class="w-full"
+              title="Ver perfil"
+            >
+              Ver perfil
+            </button>
+            <button
+              mat-raised-button
+              color="warn"
+              class="w-full !bg-red-600 !text-white"
+              (click)="onCancel(req.receiverId)"
+            >
+              Cancelar solicitud
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</section>

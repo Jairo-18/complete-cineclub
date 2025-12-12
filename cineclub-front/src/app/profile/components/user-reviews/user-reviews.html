@@ -1,0 +1,75 @@
+<div class="container mx-auto px-4 py-4 text-black">
+  <mat-form-field class="w-full" appearance="outline">
+    <mat-label>Buscar por título</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange()"
+      placeholder="Escribe el título de la película..."
+    />
+    <mat-icon matPrefix>search</mat-icon>
+    @if (searchQuery) {
+      <button
+        matSuffix
+        mat-icon-button
+        (click)="searchQuery = ''; onSearchChange()"
+        class="text-gray-500"
+      >
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  @if (isLoading) {
+    <div class="flex justify-center items-center py-12">
+      <mat-spinner diameter="50"></mat-spinner>
+    </div>
+  } @else {
+    <div class="grid gap-6">
+      @for (review of filteredReviews; track review.id) {
+        <app-card-review
+          [id]="review.id"
+          [title]="review.title"
+          [content]="review.content"
+          [posterPath]="review.posterPath"
+          [reviewerName]="review.reviewerName"
+          [directorName]="review.directorName"
+          [rating]="review.rating"
+          [createdAt]="review.createdAt"
+          [userId]="review.userId"
+          [currentUserId]="currentUserId"
+          [showImage]="true"
+          [showGoToReview]="true"
+          [likes]="review.likes"
+          [comments]="review.comments"
+          [liked]="review.liked"
+          class="w-[250px] md:w-full"
+          (editReview)="onEditReview($event)"
+          (deleteReview)="onDeleteReview($event)"
+          (goToReview)="onGoToReview($event)"
+        />
+      }
+
+      @if (filteredReviews.length === 0 && !searchQuery) {
+        <div class="flex flex-col items-center text-center py-12 text-gray-600">
+          <mat-icon class="mb-4">rate_review</mat-icon>
+          <p class="text-xl">No has escrito ninguna reseña aún</p>
+        </div>
+      }
+
+      @if (filteredReviews.length === 0 && searchQuery) {
+        <div class="text-center py-12 text-gray-600">
+          <mat-icon class="mb-4">search_off</mat-icon>
+          <p class="text-xl">No se encontraron reseñas con el título "{{ searchQuery }}"</p>
+        </div>
+      }
+    </div>
+
+    @if (isLoadingMore) {
+      <div class="flex justify-center items-center py-6">
+        <mat-spinner diameter="40"></mat-spinner>
+      </div>
+    }
+  }
+</div>

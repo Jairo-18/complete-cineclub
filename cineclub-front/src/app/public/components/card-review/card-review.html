@@ -1,0 +1,123 @@
+<div class="bg-white rounded-lg p-6 shadow-lg border-[0.5px] border-[#757575] w-full">
+  <div class="flex flex-col md:flex-col lg:flex-col 2xl:flex-row gap-3 md:gap-3 lg:gap-3">
+    @if (isOwner) {
+      <div class="w-full flex md:flex lg:flex 2xl:hidden justify-end">
+        <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-700">
+          <mat-icon>more_vert</mat-icon>
+        </button>
+        <mat-menu #menu="matMenu" xPosition="before">
+          @if (showGoToReview) {
+            <button mat-menu-item (click)="onGoToReview()">
+              <mat-icon>visibility</mat-icon>
+              <span>Ir a la publicación</span>
+            </button>
+          }
+          <button mat-menu-item (click)="onEdit()">
+            <mat-icon>edit</mat-icon>
+            <span>Editar</span>
+          </button>
+          <button mat-menu-item (click)="onDelete()" class="text-red-600">
+            <mat-icon class="text-red-600">delete</mat-icon>
+            <span>Eliminar</span>
+          </button>
+        </mat-menu>
+      </div>
+    }
+    @if (showImage) {
+      <div class="flex justify-center md:justify-start">
+        <img
+          [src]="moviePoster"
+          [alt]="title"
+          (error)="onImageError($event)"
+          class="w-[150px] md:w-[220px] h-[210px] md:h-[320px] object-cover flex-shrink-0 rounded-lg shadow-xl border-[0.5px] border-[#757575]"
+        />
+      </div>
+    }
+    <div class="flex flex-col w-full justify-between">
+      @if (isOwner) {
+        <div class="w-full hidden md:hidden lg:hidden 2xl:flex 3xl:flex justify-end">
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-700">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            @if (showGoToReview) {
+              <button mat-menu-item (click)="onGoToReview()">
+                <mat-icon>visibility</mat-icon>
+                <span>Ir a la publicación</span>
+              </button>
+            }
+            <button mat-menu-item (click)="onEdit()">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="onDelete()" class="text-red-600">
+              <mat-icon class="text-red-600">delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        </div>
+      }
+      <div class="flex flex-col">
+        <div class="flex flex-col md:flex-col 2xl:flex-col items-start 2xl:items-start flex-1">
+          <h2 class="text-xl md:text-3xl font-bold text-gray-900">{{ title }}</h2>
+          <div class="flex gap-0.5 ml-0 md:ml-4 lg:ml-0 mt-2 2xl:mt-0">
+            <span
+              *ngFor="let filled of stars"
+              class="text-2xl"
+              [class.text-orange-400]="filled"
+              [class.text-gray-300]="!filled"
+            >
+              ★
+            </span>
+          </div>
+        </div>
+
+        <p class="text-gray-600 text-sm md:text-base mb-2">
+          <span class="font-semibold">Director:</span> {{ directorName }}
+        </p>
+
+        <p class="text-gray-700 text-xs md:text-base leading-relaxed mb-1 break-words break-all">
+          {{ content }}
+        </p>
+      </div>
+
+      <div
+        class="flex flex-col w-full md:flex-row justify-between items-start md:items-center mt-auto"
+      >
+        <p class="text-gray-600">
+          @if (showGoToReview) {
+            <span class="font-semibold text-xs md:text-base">Publicado el:</span>
+            <span class="text-xs md:text-base"> {{ formattedDate }}</span>
+          } @else {
+            <span class="font-semibold text-xs md:text-base">Publicado por:</span>
+            <span class="text-xs md:text-base"> {{ reviewerName }} el {{ formattedDate }}</span>
+          }
+        </p>
+
+        <div class="flex items-center gap-4 mt-2 md:mt-0">
+          <div
+            class="flex items-center gap-1 text-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+            (click)="toggleLike()"
+          >
+            <mat-icon
+              [ngClass]="liked ? 'text-red-500 hover:text-gray-500' : 'hover:text-red-500'"
+              class="scale-75 md:scale-100 transition-transform active:scale-90"
+              >{{ liked ? 'favorite' : 'favorite_border' }}</mat-icon
+            >
+            <span class="text-xs md:text-base select-none">{{ likes }}</span>
+          </div>
+          <div
+            class="flex items-center gap-1 text-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+            (click)="openReviewDetails()"
+          >
+            <mat-icon
+              class="scale-75 md:scale-100 transition-transform active:scale-90 hover:text-blue-500"
+              >chat_bubble_outline</mat-icon
+            >
+            <span class="text-xs md:text-base">{{ comments }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

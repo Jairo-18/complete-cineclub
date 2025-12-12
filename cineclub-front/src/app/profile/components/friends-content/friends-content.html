@@ -1,0 +1,142 @@
+<div class="text-center text-black">
+  <!-- <p class="text-sm text-gray-500 mb-2">Tienes {{ total }} amigos en total</p> -->
+  <mat-form-field class="w-full mb-1 md:mb-3" appearance="outline">
+    <mat-label>Buscar amigo por nombre</mat-label>
+    <input
+      matInput
+      type="text"
+      [(ngModel)]="searchQuery"
+      (ngModelChange)="onSearchChange()"
+      placeholder="Escribe el nombre..."
+    />
+    <mat-icon matPrefix>search</mat-icon>
+    @if (searchQuery) {
+      <button matSuffix mat-icon-button (click)="clearSearch()" class="text-gray-500">
+        <mat-icon>close</mat-icon>
+      </button>
+    }
+  </mat-form-field>
+
+  @if (loading) {
+    <div class="flex flex-col items-center justify-center gap-2 text-gray-600 mt-8">
+      <div class="flex justify-center items-center"><app-loader></app-loader></div>
+    </div>
+  } @else {
+    @if (friendsInterface.length === 0) {
+      @if (searchQuery) {
+        <div class="flex justify-center items-center text-black p-4">
+          No se encontraron amigos con el nombre "{{ searchQuery }}".
+        </div>
+      } @else {
+        <div class="flex justify-center items-center text-black p-4">
+          No tienes amigos agregados.
+        </div>
+      }
+    } @else {
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-6 3xl:grid-cols-7 gap-1 w-full"
+      >
+        @for (friendItem of friendsInterface; track friendItem.id) {
+          <div
+            class="bg-[#F0F4F9] rounded-lg flex items-center overflow-hidden border-[0.5px] border-[#757575]"
+          >
+            <!-- Mobile View -->
+            <div
+              class="flex flex-col w-full md:hidden justify-between items-center bg-white rounded-lg border-[0.5px] border-[#757575] p-3 gap-2"
+            >
+              <div class="flex flex-row w-full items-center gap-3">
+                <img
+                  [src]="friendItem.friend?.avatarUrl || '/assets/images/defaultUser.png'"
+                  (error)="onImageError($event)"
+                  alt="avatar"
+                  class="w-12 h-12 rounded-full object-cover shadow-sm border-[0.5px] border-[#757575]"
+                  referrerpolicy="no-referrer"
+                  crossorigin="anonymous"
+                />
+                <a
+                  [routerLink]="['/profile/public-profile', friendItem.friend?.id]"
+                  class="text-[10px] font-bold text-black hover:text-[#9811fb] hover:underline cursor-pointer"
+                >
+                  {{ friendItem.friend?.fullName }}
+                </a>
+              </div>
+              <div class="w-full">
+                <button
+                  mat-raised-button
+                  color="warn"
+                  class="w-full !bg-red-600 !text-white"
+                  (click)="
+                    openRemoveFriendDialog(
+                      friendItem.friend?.id || '',
+                      friendItem.friend?.fullName || ''
+                    )
+                  "
+                >
+                  Eliminar amigo
+                </button>
+              </div>
+            </div>
+
+            <!-- Desktop View -->
+            <div
+              class="hidden md:flex flex-col md:flex-col lg:flex-col 2xl:flex-col 3xl:flex-col w-full gap-1 border-none border-[#757575]"
+            >
+              <div
+                class="flex flex-row md:flex-col lg:flex-col 2xl:flex-col 3xl:flex-col w-full justify-center items-center gap-1 md:gap-2"
+              >
+                <img
+                  [src]="friendItem.friend?.avatarUrl || '/assets/images/defaultUser.png'"
+                  (error)="onImageError($event)"
+                  alt="avatar"
+                  class="flex w-full h-full rounded-none rounded-tl-lg rounded-tr-lg"
+                  referrerpolicy="no-referrer"
+                  crossorigin="anonymous"
+                />
+              </div>
+
+              <section
+                class="w-[80%] md:w-[80%] lg:w-[80%] 2xl:w-[80%] 3xl:w-[80%] flex flex-col justify-start items-start mx-auto"
+              >
+                <span
+                  class="text-sm md:text-[12px] lg:text-[12px] 2xl:text-sm 3xl:text-sm text-black mt-2"
+                >
+                  {{ friendItem.friend?.fullName }}
+                </span>
+                <div
+                  class="w-full flex flex-col md:flex md:flex-col lg:flex-col 2xl:flex-col gap-2 py-4"
+                >
+                  <button
+                    mat-stroked-button
+                    [routerLink]="['/profile/public-profile', friendItem.friend?.id]"
+                    class="!w-full"
+                  >
+                    <span>Ver perfil</span>
+                  </button>
+                  <button
+                    mat-raised-button
+                    color="warn"
+                    class="w-full !bg-red-600 !text-white"
+                    (click)="
+                      openRemoveFriendDialog(
+                        friendItem.friend?.id || '',
+                        friendItem.friend?.fullName || ''
+                      )
+                    "
+                  >
+                    <span>Eliminar</span>
+                  </button>
+                </div>
+              </section>
+            </div>
+          </div>
+        }
+      </div>
+
+      @if (isLoadingMore) {
+        <div class="flex justify-center items-center py-6">
+          <mat-spinner diameter="40"></mat-spinner>
+        </div>
+      }
+    }
+  }
+</div>

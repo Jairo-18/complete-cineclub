@@ -1,0 +1,73 @@
+<article class="flex relative min-h-screen bg-white text-white">
+  <!-- Loader inicial o durante transiciones -->
+  <div
+    *ngIf="isInitializing || !isReady || isTransitioning"
+    class="fixed inset-0 z-[9999] flex flex-col items-center justify-center w-full h-screen gap-3 bg-white"
+  >
+    <div class="flex justify-center items-center"><app-loader></app-loader></div>
+  </div>
+
+  <ng-container *ngIf="isReady">
+    <!-- Layout sin autenticación -->
+    <div *ngIf="!isLoggedIn" class="app-container w-full animate-fade-in">
+      <app-nav-bar class="brand-nav-bar"></app-nav-bar>
+      <main class="main w-full">
+        <router-outlet></router-outlet>
+      </main>
+    </div>
+
+    <!-- Layout con autenticación -->
+    <ng-container *ngIf="isLoggedIn">
+      <app-side-bar
+        *ngIf="showSidebar && hasValidRole"
+        (sidebarStateChanged)="onSidebarStateChanged($event)"
+        #sidebar
+      ></app-side-bar>
+
+      <div
+        *ngIf="showSidebar && hasValidRole && !isSidebarCollapsed"
+        class="sidebar-overlay md:hidden"
+        (click)="closeSidebarFromOverlay()"
+      ></div>
+
+      <div
+        class="app-container w-full animate-fade-in"
+        [class.sidebar-open-mobile]="!isSidebarCollapsed"
+        [class.sidebar-expanded-desktop]="!isSidebarCollapsed"
+      >
+        <button
+          *ngIf="showSidebar"
+          class="notification-button rounded-full p-3"
+          (click)="toggleNotifications()"
+          [class.active]="showNotifications"
+          [matBadge]="notificationCount"
+          [matBadgeHidden]="notificationCount === 0"
+          matBadgeColor="warn"
+        >
+          <mat-icon class="text-white">notifications</mat-icon>
+        </button>
+
+        <div
+          *ngIf="showNotifications && showSidebar"
+          class="notification-overlay"
+          [class.closing]="isClosingNotifications"
+          (click)="closeNotifications()"
+        ></div>
+
+        <div
+          *ngIf="showNotifications && showSidebar"
+          class="notification-panel w-[95%] md:w-[65%] lg:w-[45%] 2xl:w-[30%] 3xl:w-[30%] min-h-9"
+          [class.closing]="isClosingNotifications"
+        >
+          <app-notification
+            (notificationCount)="handleNotificationCount($event)"
+          ></app-notification>
+        </div>
+
+        <main class="main" [class.pl-[64px]]="showSidebar">
+          <router-outlet></router-outlet>
+        </main>
+      </div>
+    </ng-container>
+  </ng-container>
+</article>

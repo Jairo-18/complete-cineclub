@@ -1,0 +1,160 @@
+@if (loading()) {
+  <div class="flex flex-col items-center justify-center py-8">
+    <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-[#9811fb]"></div>
+    <p class="text-gray-600 mt-4">Cargando perfil...</p>
+  </div>
+}
+
+@if (!loading() && profile()) {
+  <div
+    class="flex flex-col gap-1 md:gap-5 p-4 md:p-8 bg-[#F0F4F9] rounded-lg shadow-lg border-[0.5px] border-[#757575] text-center justify-center items-center text-black"
+  >
+    <div class="flex w-full">
+      <button mat-fab extended (click)="goBack()" class=" ">
+        <mat-icon class="!text-lg">arrow_back</mat-icon>
+        Volver
+      </button>
+    </div>
+    <!-- Imagen con botón de volver -->
+    <img
+      [src]="avatarUrl()"
+      (error)="onImageError($event)"
+      alt="Imagen de perfil"
+      class="w-[110px] h-[110px] rounded-full shadow-xl border-[0.5px] border-[#757575] object-cover"
+      referrerpolicy="no-referrer"
+      crossorigin="anonymous"
+    />
+    <!-- Nombre completo (solo lectura) -->
+    <div class="flex items-center gap-3">
+      <span class="text-base md:text-2xl lg:text-xl 2xl:text-2xl font-bold text-black">
+        {{ profile()?.fullName || 'Usuario' }}
+      </span>
+    </div>
+
+    <!-- Username (solo lectura) -->
+    <div class="flex items-center gap-3">
+      <span class="text-xs md:text-base text-[#757575] font-normal">
+        {{ profile()?.username ? '@' + profile()!.username : 'Sin nombre de usuario' }}
+      </span>
+    </div>
+
+    <!-- Bibliografía (solo lectura) -->
+    <div class="flex flex-col items-center gap-3 mb-2 md:mb-0">
+      <span class="text-sm md:text-base font-medium text-[#757575]">
+        {{ displayedBibliography() || 'Sin biografía' }}
+      </span>
+
+      @if ((profile()?.bibliography?.length ?? 0) > 500) {
+        <button
+          class="text-[#9811fb] text-xs font-semibold hover:underline"
+          (click)="toggleBibliography()"
+        >
+          {{ showFullBibliography() ? 'Ver menos' : 'Ver más...' }}
+        </button>
+      }
+    </div>
+
+    <!-- País y fecha de registro -->
+    <div class="flex content-between items-center justify-center gap-4">
+      @if (profile()!.country) {
+        <div class="flex items-center gap-3">
+          <mat-icon class="!text-[#9811fb]">public</mat-icon>
+          <span class="text-xs font-normal text-[#757575]">
+            {{ profile()!.country }}
+          </span>
+        </div>
+      }
+
+      <div class="flex items-center gap-3">
+        <mat-icon class="!text-[#9811fb]">calendar_today</mat-icon>
+        <span class="text-xs font-normal text-[#757575] capitalize">
+          {{ profile()!.created_at | date: 'MMMM, yyyy' }}
+        </span>
+      </div>
+    </div>
+    <!-- Friend Actions -->
+    @if (friendStatus() !== 'SELF' && !loading()) {
+      <div class="flex items-center gap-4 my-2">
+        @switch (friendStatus()) {
+          @case ('NONE') {
+            <button
+              mat-flat-button
+              class="!bg-[#9811fb] !text-white"
+              [disabled]="actionLoading()"
+              (click)="sendRequest()"
+            >
+              @if (actionLoading()) {
+                <mat-icon class="animate-spin text-sm">autorenew</mat-icon>
+              } @else {
+                <mat-icon>person_add</mat-icon>
+              }
+              Agregar amigo
+            </button>
+          }
+          @case ('FRIEND') {
+            <button
+              mat-flat-button
+              color="warn"
+              [disabled]="actionLoading()"
+              (click)="removeFriend()"
+            >
+              @if (actionLoading()) {
+                <mat-icon class="animate-spin text-sm">autorenew</mat-icon>
+              } @else {
+                <mat-icon>person_remove</mat-icon>
+              }
+              Eliminar amigo
+            </button>
+          }
+          @case ('REQUEST_SENT') {
+            <button
+              mat-raised-button
+              color="warn"
+              class="w-full !bg-red-600 !text-white"
+              [disabled]="actionLoading()"
+              (click)="cancelRequest()"
+            >
+              Cancelar solicitud
+            </button>
+          }
+          @case ('REQUEST_RECEIVED') {
+            <div class="flex gap-2">
+              <button
+                mat-flat-button
+                class="!bg-[#9811fb] !text-white"
+                [disabled]="actionLoading()"
+                (click)="acceptRequest()"
+              >
+                Aceptar
+              </button>
+              <button
+                mat-stroked-button
+                color="warn"
+                [disabled]="actionLoading()"
+                (click)="rejectRequest()"
+              >
+                Rechazar
+              </button>
+            </div>
+          }
+        }
+      </div>
+    }
+  </div>
+}
+
+@if (!loading() && !profile()) {
+  <div class="flex flex-col items-center justify-center py-8">
+    <mat-icon class="!text-red-500 !text-5xl">error_outline</mat-icon>
+    <p class="text-gray-600 mt-4">No se pudo cargar el perfil</p>
+    @if (errorMessage()) {
+      <p class="text-sm text-red-500 mt-2">{{ errorMessage() }}</p>
+    }
+    <button
+      (click)="loadFriendProfile()"
+      class="mt-4 px-4 py-2 bg-[#9811fb] text-white rounded-lg hover:bg-[#7a0dd1] transition"
+    >
+      Reintentar
+    </button>
+  </div>
+}

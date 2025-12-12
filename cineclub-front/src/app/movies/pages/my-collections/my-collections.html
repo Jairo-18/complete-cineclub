@@ -1,0 +1,67 @@
+<article class="text-black flex flex-col items-center justify-center p-3 md:px-6 py-6 md:py-12">
+  <app-page-header
+    title="Mis colecciones"
+    subtitle="Gestiona tus películas guardadas y solicitudes de colección"
+  ></app-page-header>
+  <div class="w-full">
+    <mat-tab-group>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >movie</mat-icon
+          >
+          <span class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >Mis películas ({{ moviesPagination.total || movies.length }})</span
+          >
+        </ng-template>
+        <div class="py-4">
+          <app-collections-content
+            [movies]="movies"
+            [loading]="loadingMovies"
+            [hasNext]="moviesPagination.hasNext ?? false"
+            [isLoadingMore]="isLoadingMoreMovies"
+            (search)="onSearchMovies($event)"
+            (loadMore)="loadMoreMovies()"
+            (removeMovie)="onRemoveMovie($event)"
+          >
+          </app-collections-content>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >inbox</mat-icon
+          >
+          <span class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >Solicitudes recibidas ({{ receivedRequests.length }})</span
+          >
+        </ng-template>
+        <div class="py-4">
+          <app-received-collection-requests
+            [requests]="receivedRequests"
+            [loading]="loadingReceived"
+            (accept)="onAcceptRequest($event)"
+            (reject)="onRejectRequest($event)"
+          >
+          </app-received-collection-requests>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >send</mat-icon
+          >
+          <span class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >Solicitudes enviadas ({{ sentRequests.length }})</span
+          >
+        </ng-template>
+        <div class="py-4">
+          <app-sent-collection-requests [requests]="sentRequests" [loading]="loadingSent">
+          </app-sent-collection-requests>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</article>

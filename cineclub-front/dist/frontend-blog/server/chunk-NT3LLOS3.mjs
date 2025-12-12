@@ -1,0 +1,2 @@
+import './polyfills.server.mjs';
+import"./chunk-S6KH3LOX.mjs";var r=[{path:"see-users",loadComponent:()=>import("./chunk-5FA2RROF.mjs").then(e=>e.SeeUsers),\u0275entryName:"src/app/organizational/pages/see-users/see-users.ts"},{path:"edit-user/:id",loadComponent:()=>import("./chunk-MB4R5AJV.mjs").then(e=>e.EditUserPanel),\u0275entryName:"src/app/organizational/pages/edit-user-panel/edit-user-panel.ts"}];export{r as organizationalRoutes};

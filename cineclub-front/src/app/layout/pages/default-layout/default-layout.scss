@@ -1,0 +1,124 @@
+@use 'variables' as *;
+.notification-button {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  z-index: 1000;
+  background-color: $light-purple-900;
+  color: white;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+
+  &:hover {
+    background-color: $white-color-base;
+    color: black;
+    transform: scale(1.1);
+  }
+
+  &.active {
+    background-color: $light-purple-900;
+  }
+
+  mat-icon {
+    font-size: 24px;
+  }
+}
+
+.mat-badge.mat-badge {
+  --mat-badge-container-overlap-offset: -15px !important;
+}
+
+.notification-overlay {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+  animation: fadeIn 0.2s ease-in-out;
+
+  &.closing {
+    animation: fadeOut 0.3s ease-in-out;
+  }
+}
+
+.notification-panel {
+  position: fixed;
+  top: 100px;
+  right: 20px;
+  z-index: 1001;
+  animation: slideInRight 0.3s ease-in-out;
+  overflow: hidden;
+
+  &.closing {
+    animation: slideOutRight 0.3s ease-in-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutRight {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 40;
+  animation: fadeIn 0.3s ease-in-out;
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}
+
+@media (max-width: 768px) {
+  .notification-panel {
+    top: 90px;
+    right: 10px;
+  }
+
+  .notification-button {
+    top: 20px;
+    right: 20px;
+  }
+}

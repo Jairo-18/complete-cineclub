@@ -1,0 +1,15 @@
+<app-base-dialog
+  [title]="data?.title || 'Confirmar'"
+  [description]="data?.message || '¿Estás seguro de realizar esta acción?'"
+>
+  <div actions class="w-full">
+    <section class="flex content-between gap-x-2">
+      <button mat-fab extended="true" color="warn" class="!w-[50%]" (click)="confirmAction()">
+        Confirmar
+      </button>
+      <button mat-fab extended="true" color="primary" class="!w-[50%]" (click)="cancelAction()">
+        Cancelar
+      </button>
+    </section>
+  </div>
+</app-base-dialog>

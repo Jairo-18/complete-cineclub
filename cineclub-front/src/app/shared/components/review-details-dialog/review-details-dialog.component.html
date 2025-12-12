@@ -1,0 +1,101 @@
+<div class="review-details-dialog">
+  <!-- Header with close button -->
+  <div class="flex justify-between items-center mb-4">
+    <h2 class="text-xl md:text-2xl font-bold text-gray-900">Detalles de la reseña</h2>
+    <button mat-icon-button (click)="close()" class="text-gray-500 hover:text-gray-700">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+
+  <!-- Main content -->
+  <div class="flex flex-col md:flex-row gap-4 mb-4">
+    <!-- Movie poster -->
+    <div class="flex-shrink-0 flex justify-center md:justify-start">
+      <img
+        [src]="moviePoster"
+        [alt]="data.title"
+        (error)="onImageError($event)"
+        class="w-[120px] md:w-[160px] h-[180px] md:h-[240px] object-cover rounded-lg shadow-lg border-[0.5px] border-[#757575]"
+      />
+    </div>
+
+    <!-- Review info -->
+    <div class="flex flex-col flex-1 gap-2">
+      <!-- Title and actions -->
+      <div class="flex justify-between items-start">
+        <h3 class="text-lg md:text-xl font-bold text-gray-900">{{ data.title }}</h3>
+        @if (isOwner) {
+          <button mat-icon-button [matMenuTriggerFor]="menu" class="text-gray-700">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu" xPosition="before">
+            <button mat-menu-item (click)="onEdit()">
+              <mat-icon>edit</mat-icon>
+              <span>Editar</span>
+            </button>
+            <button mat-menu-item (click)="onDelete()" class="text-red-600">
+              <mat-icon class="text-red-600">delete</mat-icon>
+              <span>Eliminar</span>
+            </button>
+          </mat-menu>
+        }
+      </div>
+
+      <!-- Rating -->
+      <div class="flex gap-0.5">
+        <span
+          *ngFor="let filled of stars"
+          class="text-xl md:text-2xl"
+          [class.text-orange-400]="filled"
+          [class.text-gray-300]="!filled"
+        >
+          ★
+        </span>
+      </div>
+
+      <!-- Director -->
+      <p class="text-gray-600 text-sm md:text-base">
+        <span class="font-semibold">Director:</span> {{ data.directorName }}
+      </p>
+
+      <!-- Content -->
+      <p class="text-gray-700 text-sm md:text-base leading-relaxed break-words">
+        {{ data.content }}
+      </p>
+
+      <!-- Author and date -->
+      <p class="text-gray-500 text-xs md:text-sm mt-auto">
+        <span class="font-semibold">Publicado por:</span> {{ data.reviewerName }} el
+        {{ formattedDate }}
+      </p>
+
+      <!-- Like button -->
+      <div class="flex items-center gap-4 mt-2">
+        <div
+          class="flex items-center gap-1 text-gray-600 cursor-pointer hover:opacity-80 transition-opacity"
+          (click)="toggleLike()"
+        >
+          <mat-icon
+            [ngClass]="liked ? 'text-red-500 hover:text-gray-500' : 'hover:text-red-500'"
+            class="transition-transform active:scale-90"
+            >{{ liked ? 'favorite' : 'favorite_border' }}</mat-icon
+          >
+          <span class="text-sm select-none">{{ likes }}</span>
+        </div>
+        <div class="flex items-center gap-1 text-gray-500">
+          <mat-icon class="text-blue-500">chat_bubble</mat-icon>
+          <span class="text-sm">{{ data.comments }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <div class="border-t border-gray-200 my-4"></div>
+
+  <!-- Comments section -->
+  <div class="comments-section">
+    <h4 class="text-lg font-semibold text-gray-800 mb-3">Comentarios</h4>
+    <app-comments-list [reviewId]="data.id" [currentUserId]="data.userId"> </app-comments-list>
+  </div>
+</div>

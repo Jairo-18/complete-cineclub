@@ -1,0 +1,1 @@
+import{Nc as n,Tc as i,V as r,_ as o}from"./chunk-4XNWJBNU.js";var p=class t{_httpClient=o(n);getUserById(e){return this._httpClient.get(`${i.backendUrl}users/${e}`)}static \u0275fac=function(m){return new(m||t)};static \u0275prov=r({token:t,factory:t.\u0275fac,providedIn:"root"})};export{p as a};

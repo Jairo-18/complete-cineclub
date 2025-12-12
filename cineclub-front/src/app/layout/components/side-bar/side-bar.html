@@ -1,0 +1,126 @@
+<aside
+  class="flex flex-col bg-side-bar text-white font-bold fixed h-full z-50 sidebar-transition"
+  [ngClass]="{
+    'w-16 items-center': isCollapsed,
+    'w-64 md:w-72 p-2': !isCollapsed,
+  }"
+>
+  <div
+    class="flex h-[6%] transition-all duration-0 md:duration-700 ease-in-out"
+    [ngClass]="{
+      'mt-2 md:mt-4 justify-center': true,
+    }"
+  >
+    <button
+      (click)="toggleSidebar()"
+      mat-icon-button
+      [ngClass]="{
+        'w-[40px] h-[40px] flex text-xl rounded-full items-center justify-center border-[0.5px] border-black group transition-all duration-0 md:duration-700 ease-in-out': true,
+        'bg-[#7d0fd1] text-white hover:bg-[#ae4efd]': isCollapsed,
+        'bg-white hover:bg-[#7d0fd1] hover:text-white': !isCollapsed,
+      }"
+    >
+      @if (isCollapsed) {
+        <mat-icon
+          class="text-[#e8d5ff] group-hover:text-white transition-colors duration-0 md:duration-700"
+          >keyboard_arrow_right</mat-icon
+        >
+      } @else {
+        <mat-icon
+          class="text-[#7d0fd1] group-hover:text-[#e8d5ff] transition-colors duration-0 md:duration-700"
+          >close</mat-icon
+        >
+      }
+    </button>
+  </div>
+
+  <nav class="flex flex-col mt-4 gap-2 w-full relative flex-1">
+    @if (isLoading()) {
+      <div class="flex justify-center items-center"><app-loader></app-loader></div>
+    } @else {
+      @for (item of menuItems(); track item.title) {
+        <div
+          class="flex cursor-pointer transition-colors duration-0 md:duration-700 ease-in-out relative group"
+          (click)="item.children ? toggleSubMenu(item.title) : null"
+          [routerLink]="!item.children ? item.route : null"
+          [ngClass]="{
+            '!items-center !justify-center w-[40px] h-[40px] bg-[#7d0fd1] hover:bg-[#ae4efd] text-white rounded-full border-[0.5px] border-black mx-auto':
+              isCollapsed,
+            'items-center justify-between gap-3 p-2 rounded-lg hover:bg-[#7d0fd1]': !isCollapsed,
+          }"
+        >
+          <mat-icon
+            [ngClass]="{
+              'text-[#e8d5ff] group-hover:text-white': isCollapsed,
+              'group-hover:text-[#e8d5ff]': !isCollapsed,
+            }"
+            class="transition-colors duration-0 md:duration-700"
+            >{{ item.icon }}</mat-icon
+          >
+
+          @if (!isCollapsed) {
+            <span class="truncate flex-1">{{ item.title }}</span>
+          }
+          @if (item.children && !isCollapsed) {
+            <mat-icon>
+              {{ openSubMenu[item.title] ? 'expand_less' : 'expand_more' }}
+            </mat-icon>
+          }
+          @if (item.children && openSubMenu[item.title] && isCollapsed) {
+            <div
+              @fadeIn
+              class="absolute left-full top-0 ml-2 bg-[#7d0fd1] text-white rounded-lg shadow-lg flex flex-col w-64 py-2 z-[9999]"
+            >
+              @for (child of item.children; track child.title) {
+                <a
+                  [routerLink]="child.route"
+                  class="flex items-center gap-2 p-2 hover:bg-[#8a25e0] rounded transition"
+                >
+                  <mat-icon class="text-sm">{{ child.icon }}</mat-icon>
+                  <span>{{ child.title }}</span>
+                </a>
+              }
+            </div>
+          }
+        </div>
+
+        @if (item.children && openSubMenu[item.title] && !isCollapsed) {
+          <div @slideDown class="pl-8 flex flex-col gap-1">
+            @for (child of item.children; track child.title) {
+              <div
+                [routerLink]="child.route"
+                class="flex items-center gap-2 cursor-pointer px-3 py-1 rounded hover:bg-[#7d0fd1] transition-all duration-0 md:duration-700"
+              >
+                <mat-icon class="text-sm">{{ child.icon }}</mat-icon>
+                <span>{{ child.title }}</span>
+              </div>
+            }
+          </div>
+        }
+      }
+    }
+  </nav>
+
+  <button
+    class="mt-auto mb-2 cursor-pointer transition-colors duration-0 md:duration-700 ease-in-out flex items-center group"
+    type="button"
+    [ngClass]="{
+      'justify-center w-[40px] h-[40px] bg-[#7d0fd1] hover:bg-[#ae4efd] text-white rounded-full border-[0.5px] border-black mx-auto':
+        isCollapsed,
+      'justify-start gap-3 pl-3 w-full p-2 rounded-lg hover:bg-[#7d0fd1]': !isCollapsed,
+    }"
+    (click)="signOut()"
+  >
+    <mat-icon
+      [ngClass]="{
+        'text-[#e8d5ff] group-hover:text-white': isCollapsed,
+        'group-hover:text-[#e8d5ff]': !isCollapsed,
+      }"
+      class="transition-colors duration-0 md:duration-700"
+      >logout</mat-icon
+    >
+    @if (!isCollapsed) {
+      <span class="truncate">Cerrar sesión</span>
+    }
+  </button>
+</aside>

@@ -1,0 +1,154 @@
+@if (loading()) {
+  <div
+    class="flex justify-center items-center bg-[#F0F4F9] rounded-lg shadow-lg border-[0.5px] border-[#757575] pb-32 pt-20"
+  >
+    <app-loader></app-loader>
+  </div>
+}
+@if (!loading() && profile()) {
+  <div
+    class="flex flex-col gap-1 md:gap-5 p-4 md:p-8 bg-[#F0F4F9] rounded-lg shadow-lg border-[0.5px] border-[#757575] text-center justify-center items-center text-black"
+  >
+    <img
+      [src]="avatarUrl()"
+      (error)="onImageError($event)"
+      alt="Imagen de perfíl"
+      class="w-[110px] h-[110px] rounded-full object-cover shadow-xl border-[0.5px] border-[#757575]"
+      referrerpolicy="no-referrer"
+      crossorigin="anonymous"
+    />
+
+    <div class="flex flex-col items-center justify-center gap-1 max-w-full px-2">
+      @if (editingField() === 'fullName') {
+        <input
+          type="text"
+          placeholder="Tu nombre completo"
+          class="border-b border-gray-400 outline-none bg-transparent max-w-[200px] sm:max-w-[280px] md:max-w-none p-1 focus:border-[#9811fb] transition text-center"
+          [value]="tempValue()"
+          (input)="tempValue.set($any($event.target).value)"
+          (keyup.enter)="saveField('fullName')"
+          (keyup.escape)="cancelEditing()"
+        />
+      } @else {
+        <span class="text-base md:text-2xl lg:text-xl 2xl:text-2xl font-bold text-black">
+          {{ profile()?.fullName || 'Tu nombre completo' }}
+        </span>
+      }
+      <button
+        class="cursor-pointer text-[#9811fb] hover:bg-[#9811fb] hover:text-white rounded-full transition items-center justify-center flex p-1 flex-shrink-0"
+      >
+        <mat-icon
+          (click)="editingField() === 'fullName' ? saveField('fullName') : startEditing('fullName')"
+        >
+          {{ editingField() === 'fullName' ? 'save' : 'edit' }}
+        </mat-icon>
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center justify-center gap-1 max-w-full px-2">
+      @if (editingField() === 'username') {
+        <input
+          type="text"
+          placeholder="@nombre_usuario"
+          class="border-b border-gray-400 outline-none bg-transparent max-w-[180px] sm:max-w-[250px] md:max-w-none p-1 focus:border-[#9811fb] transition text-center"
+          [value]="tempValue()"
+          (input)="tempValue.set($any($event.target).value)"
+          (keyup.enter)="saveField('username')"
+          (keyup.escape)="cancelEditing()"
+        />
+      } @else {
+        <span class="text-xs md:text-base text-[#757575] font-normal">
+          {{ profile()?.username ? '@' + profile()!.username : 'nombre_usuario' }}
+        </span>
+      }
+      <button
+        class="cursor-pointer text-[#9811fb] hover:bg-[#9811fb] hover:text-white rounded-full transition items-center justify-center flex p-1 flex-shrink-0"
+      >
+        <mat-icon
+          (click)="editingField() === 'username' ? saveField('username') : startEditing('username')"
+        >
+          {{ editingField() === 'username' ? 'save' : 'edit' }}
+        </mat-icon>
+      </button>
+    </div>
+
+    <div class="flex flex-col items-center gap-3 mb-2 md:mb-0 max-w-full px-4">
+      @if (editingField() === 'bibliography') {
+        <div class="w-full flex flex-col items-center gap-2">
+          <textarea
+            rows="10"
+            maxlength="1500"
+            placeholder="Escribe tu bibliografía (máx. 1500 caracteres)"
+            class="w-[250px] md:w-[600px] lg:w-[800px] 2xl:w-[600px] 3xl:w-[700px] border border-gray-300 rounded-lg p-2 resize-none outline-none focus:border-[#9811fb] transition"
+            [value]="tempValue()"
+            (input)="tempValue.set($any($event.target).value)"
+            (keyup.escape)="cancelEditing()"
+          ></textarea>
+          <span class="text-xs text-gray-500 self-end pr-2">
+            {{ tempValue().length }}/1500 caracteres
+          </span>
+        </div>
+      } @else {
+        <span
+          class="text-sm md:text-base font-medium text-[#757575] text-center max-w-[280px] sm:max-w-[350px] md:max-w-[450px] lg:max-w-[650px] 2xl:max-w-[400px]"
+        >
+          {{ displayedBibliography() || 'Escribe tu bibliografía aquí' }}
+        </span>
+
+        @if ((profile()?.bibliography?.length ?? 0) > 500) {
+          <button
+            class="text-[#9811fb] text-xs font-semibold hover:underline"
+            (click)="toggleBibliography()"
+          >
+            {{ showFullBibliography() ? 'Ver menos' : 'Ver más...' }}
+          </button>
+        }
+      }
+
+      <button
+        class="cursor-pointer text-[#9811fb] hover:bg-[#9811fb] hover:text-white rounded-full trasition items-center justify-center flex p-1 flex-shrink-0"
+      >
+        <mat-icon
+          (click)="
+            editingField() === 'bibliography'
+              ? saveField('bibliography')
+              : startEditing('bibliography')
+          "
+        >
+          {{ editingField() === 'bibliography' ? 'save' : 'edit' }}
+        </mat-icon>
+      </button>
+    </div>
+
+    <div class="flex content-between items-center justify-center gap-4">
+      <div class="flex items-center gap-3">
+        <mat-icon class="!text-[#9811fb]">public</mat-icon>
+        <span class="text-xs font-normal text-[#757575]">
+          {{ profile()!.country || 'Pon tu país' }}
+        </span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <mat-icon class="!text-[#9811fb]">calendar_today</mat-icon>
+        <span class="text-xs font-normal text-[#757575] capitalize">
+          {{ profile()!.created_at | date: 'MMMM, yyyy' }}
+        </span>
+      </div>
+    </div>
+  </div>
+}
+@if (!loading() && !profile()) {
+  <div class="flex flex-col items-center justify-center py-8">
+    <mat-icon class="!text-red-500 !text-5xl">error_outline</mat-icon>
+    <p class="text-gray-600 mt-4">No se pudo cargar el perfil</p>
+    @if (errorMessage()) {
+      <p class="text-sm text-red-500 mt-2">{{ errorMessage() }}</p>
+    }
+    <button
+      (click)="loadProfile()"
+      class="mt-4 px-4 py-2 bg-[#9811fb] text-white rounded-lg hover:bg-[#7a0dd1] transition"
+    >
+      Reintentar
+    </button>
+  </div>
+}

@@ -1,0 +1,59 @@
+<app-base-dialog
+  [title]="'Compartir Biblioteca'"
+  [description]="'Comparte tu colección de películas con un amigo'"
+>
+  <div
+    #scrollContainer
+    form
+    class="flex flex-col gap-3 overflow-y-auto custom-scrollbar max-h-[350px] pr-2 md:pr-4"
+  >
+    @if (loading && currentPage === 1) {
+      <div class="flex justify-center py-8">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+    } @else if (friends.length === 0) {
+      <p class="text-center text-gray-500 py-8">No tienes amigos agregados aún.</p>
+    } @else {
+      @for (friendItem of friends; track friendItem.id) {
+        <div
+          class="flex items-center justify-between p-3 shadow-lg border-[0.5px] border-[#757575] rounded-lg transition-colors"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              [src]="friendItem.friend?.avatarUrl || '/assets/images/defaultUser.png'"
+              (error)="onImageError($event)"
+              alt="Avatar"
+              class="w-10 h-10 rounded-full object-cover shadow-xl border-[0.5px] border-[#757575]"
+              referrerpolicy="no-referrer"
+              crossorigin="anonymous"
+            />
+            <div class="flex flex-col">
+              <span class="font-semibold text-gray-800">{{ friendItem.friend?.fullName }}</span>
+              <span class="text-xs text-gray-500">{{ friendItem.friend?.email }}</span>
+            </div>
+          </div>
+          <button
+            mat-icon-button
+            color="primary"
+            (click)="shareWithFriend(friendItem.friend?.id || '')"
+            [disabled]="sharing"
+            matTooltip="Compartir"
+          >
+            <mat-icon>send</mat-icon>
+          </button>
+        </div>
+      }
+
+      @if (isLoadingMore) {
+        <div class="flex justify-center py-4">
+          <mat-spinner diameter="20"></mat-spinner>
+        </div>
+      }
+    }
+  </div>
+  <div actions class="w-full">
+    <button mat-raised-button color="warn" class="w-full !bg-red-600 !text-white" (click)="close()">
+      <span>Cerrar</span>
+    </button>
+  </div>
+</app-base-dialog>

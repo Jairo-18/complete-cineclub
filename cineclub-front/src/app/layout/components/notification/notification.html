@@ -1,0 +1,20 @@
+<article
+  class="bg-[#F0F4F9]/70 backdrop-blur-sm rounded-lg shadow-lg border-[0.5px] border-[#757575] overflow-hidden"
+>
+  <div *ngIf="isLoading" class="flex justify-center items-center h-48">
+    <mat-spinner diameter="40"></mat-spinner>
+  </div>
+
+  <mat-tab-group *ngIf="!isLoading">
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <mat-icon class="mr-1">notifications</mat-icon>
+        Notificaciones
+      </ng-template>
+      <app-notification-requests
+        (notificationCount)="handleNotificationCount($event)"
+        [initialData]="notificationsData"
+      ></app-notification-requests>
+    </mat-tab>
+  </mat-tab-group>
+</article>

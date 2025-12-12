@@ -1,0 +1,1 @@
+import"./chunk-ODN5LVDJ.js";var r=[{path:"see-users",loadComponent:()=>import("./chunk-NPLINP34.js").then(e=>e.SeeUsers)},{path:"edit-user/:id",loadComponent:()=>import("./chunk-7CBWOAPF.js").then(e=>e.EditUserPanel)}];export{r as organizationalRoutes};

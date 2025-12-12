@@ -1,0 +1,51 @@
+<article class="text-black flex flex-col items-center justify-center p-3 md:px-6 py-6 md:py-12">
+  <app-page-header
+    title="Descubre nuevas recomendaciones"
+    subtitle="Explora lo que tu comunidad está recomendando y comparte tus favoritos"
+  ></app-page-header>
+  <section
+    class="flex flex-col md:flex-col lg:flex-row 2xl:flex-row 3xl:flex-row gap-10 md:gap-5 lg:gap-5 2xl:gap-10 3xl:gap-5 w-full"
+  >
+    <div
+      class="flex flex-col w-full h-full md:w-full lg:w-[60%] 2xl:w-[70%] 3xl:w-[75%] gap-5 md:gap-5 lg:gap-5 2xl:gap-10 3xl:gap-5"
+    >
+      <button
+        class="add-recommendation-btn flex flex-col w-full rounded-lg shadow-lg justify-center items-center p-4 bg-[#F0F4F9]/70 backdrop-blur-sm cursor-pointer text-[#757575] hover:text-white"
+        (click)="createReviews()"
+      >
+        <mat-icon class="font-extrabold">add</mat-icon>
+        <span class="font-medium">Añadir nueva recomendación</span>
+      </button>
+
+      <div class="block lg:hidden w-full">
+        <app-friend-card
+          class="w-full"
+          [users]="mobileUsers"
+          [loading]="loadingMobile"
+          [paginationParams]="mobileParams"
+          (next)="nextMobilePage()"
+        ></app-friend-card>
+      </div>
+      <app-reviews-content
+        class="w-full"
+        [mobileUsers]="mobileUsers"
+        [loadingMobile]="loadingMobile"
+        [mobileParams]="mobileParams"
+        (nextMobilePage)="nextMobilePage()"
+      ></app-reviews-content>
+    </div>
+
+    <div
+      class="hidden md:hidden lg:flex 2xl:flex 3xl:flex w-full h-full md:w-full lg:w-[40%] 2xl:w-[30%] 3xl:w-[25%]"
+    >
+      <app-friend-card
+        class="w-full"
+        [users]="desktopUsers"
+        [loading]="loadingDesktop"
+        [paginationParams]="desktopParams"
+        (next)="nextDesktopPage()"
+        (prev)="prevDesktopPage()"
+      ></app-friend-card>
+    </div>
+  </section>
+</article>

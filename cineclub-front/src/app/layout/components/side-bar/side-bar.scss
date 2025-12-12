@@ -1,0 +1,7 @@
+.sidebar-transition {
+  transition: 0.1s ease-in-out;
+
+  @media (min-width: 768px) {
+    transition: width 0.7s ease-in-out;
+  }
+}

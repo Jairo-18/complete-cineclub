@@ -1,0 +1,64 @@
+<div
+  class="bg-[#F0F4F9] rounded-lg p-6 w-full md:w-full lg:w-full 2xl:w-full 3xl:w-full shadow-lg border-[0.5px] border-[#757575]"
+>
+  <div class="flex flex-col md:flex-col lg:flex-col 2xl:flex-row gap-3 md:gap-6">
+    <img
+      [src]="image"
+      [alt]="title"
+      class="w-32 h-48 object-cover rounded-lg flex-shrink-0 shadow-xl border-[0.5px] border-[#757575]"
+    />
+
+    <div class="flex-1">
+      <div class="flex flex-col md:flex-col 2xl:flex-row items-start justify-between mb-2">
+        <h2 class="text-xl md:text-3xl font-bold text-gray-900">{{ title }}</h2>
+        <p class="flex md:hidden text-gray-600 text-base md:text-lg">{{ author }}</p>
+        <div class="flex gap-0.5 ml-0 md:ml-4 lg:ml-0">
+          <span
+            *ngFor="let filled of stars"
+            class="text-2xl"
+            [class.text-orange-400]="filled"
+            [class.text-gray-300]="!filled"
+          >
+            ★
+          </span>
+        </div>
+      </div>
+
+      <p class="hidden md:flex text-gray-600 text-base md:text-lg mb-3">{{ author }}</p>
+
+      <p class="text-gray-700 text-xs md:text-base leading-relaxed mb-3 md:mb-6">
+        {{ description }}
+      </p>
+
+      <div class="flex gap-4">
+        <button class="flex items-center gap-2 text-gray-700 hover:text-red-500 transition-colors">
+          <svg
+            class="w-4 md:w-6 h-4 md:h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+          >
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"
+            ></path>
+          </svg>
+          <span class="text-sm md:text-lg">{{ likes }}</span>
+        </button>
+
+        <button class="flex items-center gap-2 text-gray-700 hover:text-blue-500 transition-colors">
+          <svg
+            class="w-4 md:w-6 h-4 md:h-6"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            stroke-width="2"
+          >
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          <span class="text-sm md:text-lg">{{ comments }}</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

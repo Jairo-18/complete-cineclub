@@ -1,0 +1,143 @@
+<app-base-dialog
+  [title]="data?.title || 'Crear Reseña'"
+  [description]="data?.message || 'Comparte tu opinión sobre esta película'"
+>
+  <div form>
+    <form [formGroup]="reviewForm" class="flex flex-col gap-1">
+      <!-- Movie Selector with Integrated Search -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>{{ isEditMode ? 'Película' : 'Buscar película' }}</mat-label>
+        <input
+          type="text"
+          matInput
+          [matAutocomplete]="movieAuto"
+          [formControl]="movieFilterControl"
+          [placeholder]="isEditMode ? '' : 'Título de la película...'"
+          (focus)="onMovieFocus()"
+          (blur)="onMovieBlur()"
+        />
+        <mat-icon matPrefix class="icon-small">movie</mat-icon>
+        @if (isLoadingMovies) {
+          <mat-icon matSuffix>
+            <mat-spinner diameter="20"></mat-spinner>
+          </mat-icon>
+        }
+        @if (movieFilterControl.value && !isLoadingMovies && !isEditMode) {
+          <button
+            matSuffix
+            mat-icon-button
+            type="button"
+            (click)="clearMovieSelection()"
+            matTooltip="Limpiar selección"
+          >
+            <mat-icon>clear</mat-icon>
+          </button>
+        }
+
+        <mat-autocomplete
+          #movieAuto="matAutocomplete"
+          [displayWith]="displayMovie"
+          (optionSelected)="onMovieSelected($event)"
+        >
+          @for (movie of filteredMovies; track movie.id) {
+            <mat-option [value]="movie">
+              {{ movie.title }}
+            </mat-option>
+          }
+          @if (showNoResultsMessage) {
+            <mat-option disabled>
+              <span class="text-gray-500">No se encontraron películas</span>
+            </mat-option>
+          }
+        </mat-autocomplete>
+        @if (
+          reviewForm.get('movieId')?.hasError('required') && reviewForm.get('movieId')?.touched
+        ) {
+          <mat-error>La película es requerida</mat-error>
+        }
+      </mat-form-field>
+
+      <!-- Star Rating -->
+      <div class="flex flex-col gap-2">
+        <mat-label for="rating-display" class="text-sm font-medium text-gray-700"
+          >Calificación</mat-label
+        >
+        <div class="flex gap-1 items-center w-full">
+          @for (star of [1, 2, 3, 4, 5]; track star) {
+            <mat-icon
+              class="star-icon cursor-pointer"
+              (click)="setRating(star)"
+              (mouseenter)="setHoverRating(star)"
+              (mouseleave)="clearHoverRating()"
+              [ngClass]="{
+                'text-yellow-400': hoveredRating >= star || rating >= star,
+                'text-gray-300': hoveredRating < star && rating < star,
+              }"
+            >
+              {{ getStarIcon(star) }}
+            </mat-icon>
+          }
+        </div>
+        <span id="rating-display" class="text-sm text-gray-600">{{ rating }} estrellas</span>
+        @if (
+          (reviewForm.get('rating')?.hasError('required') ||
+            reviewForm.get('rating')?.hasError('min')) &&
+          reviewForm.get('rating')?.touched
+        ) {
+          <span class="text-red-600 text-xs"
+            >La calificación es requerida, mínimo 0.5 estrellas</span
+          >
+        }
+      </div>
+
+      <!-- Review Content -->
+      <mat-form-field appearance="outline" class="w-full">
+        <mat-label>Tu reseña</mat-label>
+        <textarea
+          matInput
+          formControlName="content"
+          rows="5"
+          placeholder="Escribe tu opinión sobre la película..."
+          maxlength="500"
+        ></textarea>
+        <mat-icon matPrefix class="icon-small">rate_review</mat-icon>
+        <mat-hint align="end"
+          >{{ reviewForm.get('content')?.value?.length || 0 }}/500 caracteres</mat-hint
+        >
+        @if (
+          reviewForm.get('content')?.hasError('required') && reviewForm.get('content')?.touched
+        ) {
+          <mat-error>La reseña es requerida</mat-error>
+        }
+        @if (
+          reviewForm.get('content')?.hasError('minlength') && reviewForm.get('content')?.touched
+        ) {
+          <mat-error>La reseña debe tener al menos 10 caracteres</mat-error>
+        }
+        @if (
+          reviewForm.get('content')?.hasError('maxlength') && reviewForm.get('content')?.touched
+        ) {
+          <mat-error>La reseña no puede exceder los 500 caracteres</mat-error>
+        }
+      </mat-form-field>
+    </form>
+  </div>
+
+  <div actions class="w-full">
+    <section class="flex content-between gap-x-2">
+      <button mat-fab extended="true" color="warn" class="!w-[50%]" (click)="cancelAction()">
+        Cancelar
+      </button>
+      <button
+        mat-fab
+        extended="true"
+        color="primary"
+        class="!w-[50%]"
+        (click)="submitReview()"
+        [disabled]="!reviewForm.valid"
+      >
+        Publicar
+      </button>
+    </section>
+  </div>
+</app-base-dialog>

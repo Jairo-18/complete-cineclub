@@ -1,0 +1,102 @@
+@if (loading) {
+  <div class="flex justify-center items-center bg-[#F0F4F9] pb-32 pt-20">
+    <app-loader></app-loader>
+  </div>
+} @else if (movies.length === 0) {
+  <div class="flex justify-center items-center bg-[#F0F4F9] pb-32 pt-20">
+    <p class="text-gray-600 mt-8 text-lg">
+      @if (searchTerm) {
+        No se encontraron películas con "{{ searchTerm }}"
+      } @else {
+        No tienes películas guardadas.
+      }
+    </p>
+  </div>
+} @else {
+  <article class="p-4 md:p-8 text-center text-black">
+    <div class="flex flex-col md:flex-row gap-0 md:gap-4 mb-6 md:mb-0">
+      <mat-form-field class="w-full md:w-[70%]" appearance="outline">
+        <mat-label>Buscar en mis películas</mat-label>
+        <input
+          matInput
+          type="text"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearchChange()"
+          placeholder="Buscar por título..."
+        />
+        <mat-icon matPrefix>search</mat-icon>
+        @if (searchTerm) {
+          <button matSuffix mat-icon-button (click)="clearSearch()">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+      <div class="w-full md:w-[30%] h-[56px]">
+        <button mat-fab extended class="!w-full !h-[56px]" (click)="openShareDialog()">
+          Compartir biblioteca
+        </button>
+      </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      @for (movie of movies; track movie.id) {
+        <div
+          class="flex flex-col w-full bg-white rounded-lg p-6 justify-center items-start gap-4 shadow-lg border-[0.5px] border-[#757575] relative"
+        >
+          <div class="w-full flex flex-col md:flex-row justify-start items-start gap-3">
+            <div
+              class="flex w-full md:w-[150px] h-[210px] md:h-[210px] justify-center items-center"
+            >
+              <img
+                [src]="getMoviePoster(movie.posterPath)"
+                alt="{{ movie.title }}"
+                (error)="onImageError($event)"
+                class="w-[150px] md:w-[150px] h-[210px] md:h-[210px] object-cover flex-shrink-0 rounded-lg shadow-xl border-[0.5px] border-[#757575]"
+              />
+            </div>
+
+            <div class="flex flex-col w-full justify-end items-center">
+              <div class="flex flex-col gap-2 justify-center items-start text-left h-full">
+                <h3 class="text-xl font-semibold mb-1">{{ movie.title }}</h3>
+
+                <p class="text-gray-700 text-sm mb-3">
+                  {{ getDisplayedOverview(movie) || 'Sin descripción disponible.' }}
+                  @if ((movie.overview?.length || 0) > 150) {
+                    <button
+                      class="text-[#9811fb] text-xs font-semibold hover:underline ml-1"
+                      (click)="toggleOverview(movie.id)"
+                    >
+                      {{ isOverviewExpanded(movie.id) ? 'Ver menos' : 'Ver más' }}
+                    </button>
+                  }
+                </p>
+
+                <p class="text-gray-500 text-xs mb-3">
+                  <span class="font-medium">Fecha de estreno:</span>
+                  {{ movie.releaseDate | date: 'yyyy-MM-dd' }}
+                </p>
+              </div>
+              <div class="flex w-full justify-end items-center">
+                <button
+                  class="text-red-600 hover:bg-red-600 hover:text-white transition-colors rounded-full px-2 pb-1 pt-2"
+                  (click)="openDeleteMovieDialog(movie.id)"
+                >
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+
+    <mat-paginator
+      class="mt-6 rounded-lg"
+      [length]="paginationParams.total"
+      [pageSize]="paginationParams.size"
+      [pageSizeOptions]="[2, 4, 10, 25]"
+      [pageIndex]="(paginationParams.page || 0) - 1"
+      (page)="onChangePagination($event)"
+    ></mat-paginator>
+  </article>
+}

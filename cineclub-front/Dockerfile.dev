@@ -1,0 +1,22 @@
+# Dockerfile para desarrollo de Angular
+FROM node:20-alpine
+
+WORKDIR /app
+
+# Instalar Angular CLI globalmente
+RUN npm install -g @angular/cli@20
+
+# Copiar package.json y package-lock.json primero (para cache de dependencias)
+COPY package*.json ./
+
+# Instalar dependencias
+RUN npm ci
+
+# Copiar el resto del código
+COPY . .
+
+# Puerto del servidor de desarrollo de Angular
+EXPOSE 4200
+
+# Comando para iniciar el servidor de desarrollo con polling (necesario en Docker)
+CMD ["ng", "serve", "--host", "0.0.0.0", "--poll", "2000"]

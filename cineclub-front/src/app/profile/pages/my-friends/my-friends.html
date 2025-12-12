@@ -1,0 +1,72 @@
+<article class="text-black flex flex-col items-center justify-center p-3 md:px-6 py-6 md:py-12">
+  <app-page-header
+    title="Tus amigos"
+    subtitle="Visualiza y gestiona tu lista de amigos aquí"
+  ></app-page-header>
+  <div class="w-full">
+    <mat-tab-group>
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >group</mat-icon
+          >
+          <span class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >Tus amigos ({{ paginationParams.total || friendsInterface.length }})</span
+          >
+        </ng-template>
+        <div class="py-4">
+          <app-friends-content
+            [friendsInterface]="friendsInterface"
+            [loading]="loadingFriends"
+            [hasNext]="paginationParams.hasNext ?? false"
+            [isLoadingMore]="isLoadingMoreFriends"
+            [total]="paginationParams.total"
+            (search)="onSearchFriends($event)"
+            (loadMore)="onLoadMoreFriends()"
+            (removeFriend)="onRemoveFriend($event)"
+          >
+          </app-friends-content>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >done</mat-icon
+          >
+          <span class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >Solicitudes recibidas ({{ receivedRequests.length }})</span
+          >
+        </ng-template>
+        <div class="py-4">
+          <app-received-requests
+            [requests]="receivedRequests"
+            [loading]="loadingReceived"
+            (accept)="onAcceptRequest($event)"
+            (reject)="onRejectRequest($event)"
+          >
+          </app-received-requests>
+        </div>
+      </mat-tab>
+
+      <mat-tab>
+        <ng-template mat-tab-label>
+          <mat-icon class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >send</mat-icon
+          >
+          <span class="ml-1 text-xs md:text-base lg:text-lg 2xl:text-lg 3xl:text-lg"
+            >Solicitudes enviadas ({{ sentRequests.length }})</span
+          >
+        </ng-template>
+        <div class="py-4">
+          <app-sent-requests
+            [requests]="sentRequests"
+            [loading]="loadingSent"
+            (cancel)="onCancelRequest($event)"
+          >
+          </app-sent-requests>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </div>
+</article>

@@ -1,0 +1,100 @@
+/* You can add global styles to this file, and also import other style files */
+
+@use '@angular/material' as mat;
+@use 'assets/styles/variables' as *;
+@use 'assets/styles/breakpoints';
+@use 'assets/styles/global';
+@use 'assets/styles/mat-theming';
+@use 'assets/styles/mat-config-theme';
+@use 'assets/styles/animations';
+@use 'ngx-toastr/toastr';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  background-color: white;
+}
+::-webkit-scrollbar {
+  width: 12px !important;
+  height: 12px !important;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+  border-radius: 10px !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #9811fb, #7d0fd0) !important;
+  border-radius: 10px !important;
+  border: 2px solid #f1f1f1 !important;
+}
+
+/* Hover sobre el thumb */
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7d0fd0, #6a0bb8) !important;
+}
+
+* {
+  scrollbar-color: #9811fb #f1f1f1 !important;
+  scrollbar-width: thin !important;
+}
+
+html,
+body {
+  overflow-y: auto !important;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar {
+  width: 12px !important;
+}
+
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: #f1f1f1 !important;
+}
+
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #9811fb, #7d0fd0) !important;
+  border-radius: 10px !important;
+}
+
+html::-webkit-scrollbar-thumb:hover,
+body::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7d0fd0, #6a0bb8) !important;
+}
+
+// Genre filter menu - needs to be global because mat-menu renders in overlay
+.genre-grid-menu.mat-mdc-menu-panel {
+  max-width: none !important;
+  max-height: 60vh !important; // Mobile: limitar altura con scroll
+  min-width: 85vw !important; // Mobile: 85vw
+
+  @media (min-width: 768px) {
+    min-width: 90vw !important; // Desktop: sidebar collapsed = 90vw
+    max-height: none !important; // Desktop: sin límite de altura
+  }
+}
+
+// When sidebar is expanded, use 80vw (desktop only)
+@media (min-width: 768px) {
+  .sidebar-expanded-desktop .genre-grid-menu.mat-mdc-menu-panel,
+  body:has(.sidebar-expanded-desktop) .genre-grid-menu.mat-mdc-menu-panel {
+    min-width: 80vw !important;
+  }
+}
+
+.genre-grid-menu .mat-mdc-menu-content {
+  max-height: 60vh !important; // Mobile: scroll dentro del contenido
+  overflow-y: auto !important;
+  padding: 0 !important;
+
+  @media (min-width: 768px) {
+    max-height: none !important;
+    overflow: visible !important;
+  }
+}

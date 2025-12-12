@@ -1,0 +1,22 @@
+{
+  "routes": {
+    "/": {},
+    "/auth": {},
+    "/auth/callback": {},
+    "/auth/login": {},
+    "/auth/recover-password": {},
+    "/auth/register": {},
+    "/auth/send-email": {},
+    "/auth/set-password": {},
+    "/home": {},
+    "/movies": {},
+    "/movies/library": {},
+    "/movies/top": {},
+    "/organizational": {},
+    "/organizational/see-users": {},
+    "/profile": {},
+    "/profile/my-friends": {},
+    "/profile/register-profile": {},
+    "/profile/user-profile": {}
+  }
+}
