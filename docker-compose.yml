@@ -1,37 +1,8 @@
-# Docker Compose para desarrollo local - Frontend + Backend + Servicios
+# Docker Compose para desarrollo local - Frontend + Backend
 # Uso: docker-compose up --build
+# Nota: MongoDB, Redis y Neo4j usan los servicios cloud del archivo .env
 
 services:
-  # ==================== BASE DE DATOS ====================
-  mongo:
-    image: mongo:7
-    container_name: cineclub_mongo
-    restart: unless-stopped
-    command: --bind_ip_all
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-admin}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-admin123}
-      MONGO_INITDB_DATABASE: ${MONGO_DB:-cineclub}
-    ports:
-      - '27017:27017'
-    volumes:
-      - mongo_data:/data/db
-    networks:
-      - cineclub_network
-
-  # ==================== CACHE ====================
-  redis:
-    image: redis:7-alpine
-    container_name: cineclub_redis
-    restart: unless-stopped
-    command: redis-server --requirepass ${SPRING_REDIS_PASSWORD:-redispass}
-    ports:
-      - '6379:6379'
-    volumes:
-      - redis_data:/data
-    networks:
-      - cineclub_network
-
   # ==================== BACKEND (Spring Boot) ====================
   backend:
     build:
@@ -39,43 +10,12 @@ services:
       dockerfile: Dockerfile.local
     container_name: cineclub_backend
     restart: unless-stopped
-    depends_on:
-      - mongo
-      - redis
+    env_file:
+      - ./cineclub-back/.env
     environment:
-      # App Config
-      APP_PORT: 8080
-      APP_URL: http://localhost
-      # CORS - permitir frontend
+      # Sobreescribir CORS para permitir frontend local
       CORS_ALLOWED_ORIGINS: http://localhost:4200
-      CORS_ALLOWED_METHODS: GET,POST,PUT,PATCH,DELETE,OPTIONS
-      CORS_ALLOWED_HEADERS: '*'
       CORS_ALLOW_CREDENTIALS: 'true'
-      # MongoDB
-      MONGO_USER: ${MONGO_USER:-admin}
-      MONGO_PASSWORD: ${MONGO_PASSWORD:-admin123}
-      MONGO_DB: ${MONGO_DB:-cineclub}
-      SPRING_DATA_MONGODB_URI: mongodb://${MONGO_USER:-admin}:${MONGO_PASSWORD:-admin123}@mongo:27017/${MONGO_DB:-cineclub}?authSource=admin
-      # Redis
-      SPRING_REDIS_HOST: redis
-      SPRING_REDIS_PORT: 6379
-      SPRING_REDIS_USER: default
-      SPRING_REDIS_PASSWORD: ${SPRING_REDIS_PASSWORD:-redispass}
-      # Profile
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_DEVTOOLS_RESTART_ENABLED: 'true'
-      # JWT
-      JWT_SECRET: ${JWT_SECRET:-dev-secret-key-change-in-production}
-      # Docs
-      DOCS_USERNAME: ${DOCS_USERNAME:-admin}
-      DOCS_PASSWORD: ${DOCS_PASSWORD:-admin123}
-      # Neo4j (opcional - valores vacíos para desarrollo)
-      NEO4J_URI: ${NEO4J_URI:-bolt://localhost:7687}
-      NEO4J_USERNAME: ${NEO4J_USERNAME:-neo4j}
-      NEO4J_PASSWORD: ${NEO4J_PASSWORD:-neo4jpass}
-      # Mail (opcional - valores vacíos para desarrollo)
-      MAIL_USERNAME: ${MAIL_USERNAME:-}
-      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
     ports:
       - '8080:8080'
     volumes:
@@ -107,8 +47,6 @@ services:
 
 # ==================== VOLUMES ====================
 volumes:
-  mongo_data:
-  redis_data:
   backend_m2_cache:
   frontend_node_modules:
 
