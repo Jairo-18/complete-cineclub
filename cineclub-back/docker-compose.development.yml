@@ -22,6 +22,4 @@ services:
       - NEO4J_PASSWORD=${NEO4J_PASSWORD}
     ports:
       - '${APP_PORT:-8080}:8080'
-    volumes:
-      - .:/app
-    command: ['./mvnw', 'spring-boot:run']
+    command: ["sh", "-c", "./mvnw spring-boot:run"]

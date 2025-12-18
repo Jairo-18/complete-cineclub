@@ -26,6 +26,8 @@ services:
           cpus: '0.5'
           memory: 512M
 
+    command: ["sh", "-c", "./mvnw spring-boot:run"]
+
     # Healthcheck (usa el del Dockerfile)
     healthcheck:
       test:

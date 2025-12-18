@@ -7,7 +7,7 @@ services:
   backend:
     build:
       context: ./cineclub-back
-      dockerfile: Dockerfile.local
+      dockerfile: Dockerfile
     container_name: cineclub_backend
     restart: unless-stopped
     env_file:
@@ -18,10 +18,8 @@ services:
       CORS_ALLOW_CREDENTIALS: 'true'
     ports:
       - '8080:8080'
-    volumes:
-      - ./cineclub-back:/app
-      - backend_m2_cache:/root/.m2
-    command: ['./mvnw', 'spring-boot:run']
+    # No host bind mounts - use image contents to avoid host persistence during build
+    # Use the image's default ENTRYPOINT (built JAR) to avoid running mvnw at runtime
     networks:
       - cineclub_network
 
@@ -39,16 +37,12 @@ services:
       NODE_ENV: development
     ports:
       - '4200:4200'
-    volumes:
-      - ./cineclub-front:/app
-      - frontend_node_modules:/app/node_modules # Volumen nombrado para persistir dependencias
+    # No host bind mounts - use image contents to avoid host persistence during build
     networks:
       - cineclub_network
 
 # ==================== VOLUMES ====================
-volumes:
-  backend_m2_cache:
-  frontend_node_modules:
+## Removed project-specific volumes to avoid persistence during builds
 
 # ==================== NETWORKS ====================
 networks:
